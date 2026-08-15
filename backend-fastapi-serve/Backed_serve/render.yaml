@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: decod3x-model-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    plan: free
+    envVars:
+      - key: AZURE_STORAGE_CONNECTION_STRING
+        sync: false
+      - key: AZURE_CONTAINER_NAME
+        value: model
+      - key: AZURE_BLOB_NAME
+        value: phase2_best_model.pt

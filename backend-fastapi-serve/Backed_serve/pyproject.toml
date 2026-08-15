@@ -1,0 +1,17 @@
+[project]
+name = "serve"
+version = "0.1.0"
+description = "AI Content Detection API"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "python-multipart",
+    "torch",
+    "torchvision",
+    "transformers",
+    "azure-storage-blob",
+    "Pillow",
+    "av",
+]

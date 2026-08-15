@@ -1,0 +1,459 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════════════
+   DESIGN TOKENS  — same theme, expanded into a real scale
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* Surfaces */
+  --bg-primary: #080810;
+  --bg-secondary: #0d0d1a;
+  --bg-card: #111128;
+  --bg-elevated: #16162f;
+
+  /* Brand */
+  --accent: #7c3aed;
+  --accent-light: #a855f7;
+  --accent-glow: rgba(124, 58, 237, 0.3);
+  --gradient: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+
+  /* Lines */
+  --border: rgba(124, 58, 237, 0.2);
+  --border-strong: rgba(124, 58, 237, 0.45);
+
+  /* Semantic */
+  --danger: #f87171;
+  --success: #4ade80;
+
+  /* Layout rhythm — one source of truth for section spacing */
+  --nav-h: 64px;
+  --section-y: 72px;
+
+  /* Safe areas (notches, home indicator) */
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --nav-h: 72px;
+    --section-y: 120px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BASE
+   ══════════════════════════════════════════════════════════════ */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  /* Anchor links land below the fixed navbar instead of under it */
+  scroll-padding-top: calc(var(--nav-h) + 16px);
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-inter), "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Kills the sideways scroll that wide marquees/orbs cause on phones */
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Nothing should ever be able to push the page sideways */
+#__next,
+main {
+  overflow-x: clip;
+}
+
+/* Media never overflows its container */
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+/* Long filenames / emails / URLs break instead of stretching layout */
+h1, h2, h3, h4, p, span, a, li {
+  overflow-wrap: anywhere;
+}
+
+/* Section targets clear the fixed nav */
+section[id] {
+  scroll-margin-top: calc(var(--nav-h) + 8px);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ACCESSIBILITY
+   ══════════════════════════════════════════════════════════════ */
+
+/* Visible keyboard focus everywhere — never for mouse users */
+:focus-visible {
+  outline: 2px solid var(--accent-light);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip link for keyboard users */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -100px;
+  z-index: 2000;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: calc(12px + var(--safe-t));
+}
+
+/* Every interactive element clears the 44px touch target minimum */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a[href],
+  input[type="checkbox"],
+  input[type="radio"],
+  label[for] {
+    min-height: 44px;
+  }
+  /* except inline text links inside paragraphs */
+  p a,
+  li a,
+  span a {
+    min-height: 0;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FORMS — iOS Safari zooms any input under 16px on focus
+   ══════════════════════════════════════════════════════════════ */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Autofill shouldn't paint a white box over the dark theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-primary) inset;
+  caret-color: var(--text-primary);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ══════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.5);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 58, 237, 0.5) var(--bg-primary);
+}
+
+::selection {
+  background: rgba(124, 58, 237, 0.4);
+  color: #fff;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ══════════════════════════════════════════════════════════════ */
+@keyframes marquee-left {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes marquee-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+.animate-marquee-left,
+.animate-marquee-right,
+.animate-marquee-integrations {
+  will-change: transform;
+}
+.animate-marquee-left { animation: marquee-left 40s linear infinite; }
+.animate-marquee-right { animation: marquee-right 40s linear infinite; }
+.animate-marquee-integrations { animation: marquee-left 25s linear infinite; }
+
+/* Pausing on hover lets people actually read a testimonial */
+.marquee-track:hover .animate-marquee-left,
+.marquee-track:hover .animate-marquee-right,
+.marquee-track:hover .animate-marquee-integrations {
+  animation-play-state: paused;
+}
+
+/* Phones get a faster loop so cards don't feel stalled in a narrow viewport */
+@media (max-width: 640px) {
+  .animate-marquee-left { animation-duration: 26s; }
+  .animate-marquee-right { animation-duration: 26s; }
+  .animate-marquee-integrations { animation-duration: 18s; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-text {
+  background-size: 200% auto;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Scroll reveal — falls back to visible if JS never runs */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+/* If JS is disabled, content still renders */
+.no-js .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REDUCED MOTION — respected globally, not per-component
+   ══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .animate-marquee-left,
+  .animate-marquee-right,
+  .animate-marquee-integrations {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SURFACES
+   ══════════════════════════════════════════════════════════════ */
+.glass {
+  background: rgba(17, 17, 40, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+/* Firefox / older Safari without backdrop-filter get a solid fallback
+   instead of a washed-out translucent panel */
+@supports not ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
+  .glass {
+    background: rgba(17, 17, 40, 0.94);
+  }
+}
+
+.card-surface {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+/* Hover lift — only on devices that actually hover.
+   On touch this used to leave cards stuck in the hover state after a tap. */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    border-color: rgba(124, 58, 237, 0.6);
+    box-shadow: 0 16px 40px rgba(124, 58, 237, 0.2);
+  }
+}
+/* Touch devices get a press state instead */
+@media (hover: none) {
+  .hover-lift:active {
+    transform: scale(0.99);
+    border-color: rgba(124, 58, 237, 0.5);
+  }
+}
+
+/* Glow utilities */
+.glow-purple { box-shadow: 0 0 20px rgba(124, 58, 237, 0.3), 0 0 60px rgba(124, 58, 237, 0.1); }
+.glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.2), 0 0 40px rgba(239, 68, 68, 0.05); }
+.glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.2), 0 0 40px rgba(34, 197, 94, 0.05); }
+.glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2), 0 0 40px rgba(59, 130, 246, 0.05); }
+
+/* ══════════════════════════════════════════════════════════════
+   LAYOUT HELPERS
+   ══════════════════════════════════════════════════════════════ */
+
+/* Section vertical rhythm: 72px on phones, 120px from md up.
+   Replaces the hardcoded py-[120px] that made mobile pages endless. */
+.section-y {
+  padding-top: var(--section-y);
+  padding-bottom: var(--section-y);
+}
+
+/* Horizontal gutter that respects landscape notches */
+.gutter {
+  padding-left: max(20px, var(--safe-l));
+  padding-right: max(20px, var(--safe-r));
+}
+@media (min-width: 768px) {
+  .gutter {
+    padding-left: max(24px, var(--safe-l));
+    padding-right: max(24px, var(--safe-r));
+  }
+}
+
+/* Full viewport height that survives mobile browser chrome.
+   100vh is wrong on iOS Safari — the toolbar covers the bottom. */
+.min-h-screen-safe {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+.h-screen-safe {
+  height: 100vh;
+  height: 100dvh;
+}
+
+.pb-safe { padding-bottom: max(24px, var(--safe-b)); }
+.pt-safe { padding-top: max(0px, var(--safe-t)); }
+
+/* Fade the ends of horizontal marquees */
+.mask-fade-x {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+}
+@media (max-width: 640px) {
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+  }
+}
+
+/* Body scroll lock while the mobile menu is open */
+body.menu-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Accordion that animates to its real content height —
+   the old fixed max-height clipped long answers when text wrapped on mobile */
+.accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.accordion-panel[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.accordion-panel > div {
+  overflow: hidden;
+}
+
+/* Numeric readouts stay aligned as digits change */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Gradient text — one definition, used everywhere */
+.text-gradient {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Print: strip the dark theme so reports are readable on paper */
+@media print {
+  body { background: #fff; color: #000; }
+  .glass, .card-surface { background: #fff; border-color: #ddd; }
+  nav, footer, .no-print { display: none !important; }
+}
